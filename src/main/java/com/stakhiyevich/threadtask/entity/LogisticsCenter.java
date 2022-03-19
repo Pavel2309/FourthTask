@@ -14,7 +14,7 @@ public class LogisticsCenter {
 
     private static final Logger logger = LogManager.getLogger();
 
-    private static final int NUMBER_OF_TERMINALS = 3;
+    private static final int NUMBER_OF_TERMINALS = 5;
     private static final AtomicBoolean isLogisticsCenterCreated = new AtomicBoolean(false);
 
     private static final Lock instanceLock = new ReentrantLock(true);
@@ -28,6 +28,7 @@ public class LogisticsCenter {
     private final Deque<Terminal> usedTerminals;
 
     private LogisticsCenter() {
+        //ask about whether the storage should also be a singleton
         storage = new Storage();
         availableTerminals = new ArrayDeque<>(NUMBER_OF_TERMINALS);
         usedTerminals = new ArrayDeque<>(NUMBER_OF_TERMINALS);
@@ -59,7 +60,7 @@ public class LogisticsCenter {
             }
             currentTerminal = availableTerminals.remove();
             usedTerminals.add(currentTerminal);
-            logger.info("terminal acquired, total used terminals: {}", usedTerminals.size());
+            logger.info("the terminal has been acquired, total used terminals: {}", usedTerminals.size());
         } catch (InterruptedException e) {
             logger.error("can't acquire terminal", e);
         } finally {
@@ -74,7 +75,7 @@ public class LogisticsCenter {
             usedTerminals.remove(terminal);
             availableTerminals.add(terminal);
             newAvailableTerminal.signalAll();
-            logger.info("terminal released, total available terminals: {}", availableTerminals.size());
+            logger.info("the terminal has been released, total available terminals: {}", availableTerminals.size());
         } finally {
             terminalLock.unlock();
         }
@@ -93,6 +94,6 @@ public class LogisticsCenter {
     }
 
     public void adjustStorage() {
-        storage.adjustGoodsQuantity();
+        storage.manageGoodsQuantity();
     }
 }

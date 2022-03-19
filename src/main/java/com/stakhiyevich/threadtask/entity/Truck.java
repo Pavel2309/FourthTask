@@ -1,15 +1,10 @@
 package com.stakhiyevich.threadtask.entity;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 public class Truck implements Runnable {
 
-    private static final Logger logger = LogManager.getLogger();
-
     private long id;
-    private int currentCapacity;
-    private int maxCapacity;
+    private int goodsQuantity;
+    private int capacity;
     private boolean isPrioritized;
     private TruckTask task;
 
@@ -21,20 +16,20 @@ public class Truck implements Runnable {
         this.id = id;
     }
 
-    public int getCurrentCapacity() {
-        return currentCapacity;
+    public int getGoodsQuantity() {
+        return goodsQuantity;
     }
 
-    public void setCurrentCapacity(int currentCapacity) {
-        this.currentCapacity = currentCapacity;
+    public void setGoodsQuantity(int goodsQuantity) {
+        this.goodsQuantity = goodsQuantity;
     }
 
-    public int getMaxCapacity() {
-        return maxCapacity;
+    public int getCapacity() {
+        return capacity;
     }
 
-    public void setMaxCapacity(int maxCapacity) {
-        this.maxCapacity = maxCapacity;
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
     }
 
     public boolean isPrioritized() {
@@ -57,16 +52,50 @@ public class Truck implements Runnable {
     public void run() {
         LogisticsCenter logisticsCenter = LogisticsCenter.getInstance();
         Terminal terminal = logisticsCenter.getTerminal();
-        switch (getTask()) {
+        switch (getTask().getTaskType()) {
             case LOAD -> {
                 terminal.loadTruck(this);
-                logger.info("truck loaded, current storage quantity: {}", logisticsCenter.getCurrentStorageQuantity());
             }
             case UNLOAD -> {
                 terminal.unloadTruck(this);
-                logger.info("truck unloaded, current storage quantity: {}", logisticsCenter.getCurrentStorageQuantity());
             }
         }
         logisticsCenter.releaseTerminal(terminal);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Truck)) return false;
+
+        Truck truck = (Truck) o;
+
+        if (id != truck.id) return false;
+        if (getGoodsQuantity() != truck.getGoodsQuantity()) return false;
+        if (getCapacity() != truck.getCapacity()) return false;
+        if (isPrioritized() != truck.isPrioritized()) return false;
+        return getTask() != null ? getTask().equals(truck.getTask()) : truck.getTask() == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (id ^ (id >>> 32));
+        result = 31 * result + getGoodsQuantity();
+        result = 31 * result + getCapacity();
+        result = 31 * result + (isPrioritized() ? 1 : 0);
+        result = 31 * result + (getTask() != null ? getTask().hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Truck{");
+        sb.append("id=").append(id);
+        sb.append(", goodsQuantity=").append(goodsQuantity);
+        sb.append(", capacity=").append(capacity);
+        sb.append(", isPrioritized=").append(isPrioritized);
+        sb.append(", task=").append(task);
+        sb.append('}');
+        return sb.toString();
     }
 }
