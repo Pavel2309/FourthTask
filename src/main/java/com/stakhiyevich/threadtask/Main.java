@@ -3,7 +3,6 @@ package com.stakhiyevich.threadtask;
 import com.stakhiyevich.threadtask.entity.StorageManager;
 import com.stakhiyevich.threadtask.entity.Truck;
 import com.stakhiyevich.threadtask.entity.TruckQueue;
-import com.stakhiyevich.threadtask.exception.ParserException;
 import com.stakhiyevich.threadtask.exception.ReaderException;
 import com.stakhiyevich.threadtask.parser.TruckDataParser;
 import com.stakhiyevich.threadtask.parser.impl.TruckDataParserImpl;
@@ -22,7 +21,7 @@ public class Main {
 
     private static final Logger logger = LogManager.getLogger();
     private static final String TRUCK_FILE = "data/TruckData.txt";
-
+    private static final int POOL_SIZE = 5;
     private static final int TIMER_DELAY = 0;
     private static final int TIMER_INTERVAL = 5000;
 
@@ -37,21 +36,17 @@ public class Main {
         try {
             stringOfTrucks = dataReader.readData(TRUCK_FILE);
             inputTrucks = dataParser.parseData(stringOfTrucks);
-        } catch (ReaderException | ParserException e) {
+        } catch (ReaderException e) {
             logger.error("can't read or parse file", e);
         }
 
         truckQueue.addTrucksFromList(inputTrucks);
-        ExecutorService executorService = Executors.newFixedThreadPool(5);
+        ExecutorService executorService = Executors.newFixedThreadPool(POOL_SIZE);
         Timer timer = new Timer(true);
         timer.schedule(new StorageManager(), TIMER_DELAY, TIMER_INTERVAL);
 
-//        while (!truckQueue.isEmpty()) {
-//            executorService.submit(truckQueue.pollTruck());
-//        }
         truckQueue.getTruckQueue().forEach(executorService::execute);
         executorService.shutdown();
-//        ask about timer cancellation
-//        timer.cancel();
+
     }
 }

@@ -2,7 +2,6 @@ package com.stakhiyevich.threadtask.parser.impl;
 
 import com.stakhiyevich.threadtask.entity.Truck;
 import com.stakhiyevich.threadtask.entity.TruckTask;
-import com.stakhiyevich.threadtask.exception.ParserException;
 import com.stakhiyevich.threadtask.parser.TruckDataParser;
 
 import java.util.ArrayList;
@@ -14,7 +13,7 @@ public class TruckDataParserImpl implements TruckDataParser {
     private static final String DOUBLE_COLON_SPLITTER = "::";
 
     @Override
-    public List<Truck> parseData(String value) throws ParserException {
+    public List<Truck> parseData(String value) {
         String[] trucksString = value.split(COMA_SPLITTER);
         List<Truck> trucks = new ArrayList<>();
 
@@ -32,7 +31,7 @@ public class TruckDataParserImpl implements TruckDataParser {
         return trucks;
     }
 
-    private Truck createTruckObject(long id,int currentQuantity, int capacity, boolean isPrioritized, TruckTask.TaskType taskType, int taskQuantity) {
+    private Truck createTruckObject(long id, int currentQuantity, int capacity, boolean isPrioritized, TruckTask.TaskType taskType, int taskQuantity) {
         Truck truck = new Truck();
         TruckTask truckTask = new TruckTask();
         truck.setId(id);

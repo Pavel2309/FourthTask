@@ -12,6 +12,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Storage {
 
     private static final Logger logger = LogManager.getLogger();
+
     private static final int SLEEP_TIME = 1;
     private static final double MIN_LOAD_FACTOR = 0.25;
     private static final double MAX_LOAD_FACTOR = 0.75;
@@ -34,7 +35,7 @@ public class Storage {
             notEmpty.signal();
             logger.info("{} goods have been ADDED, new quantity: {}", quantity, getCurrentQuantity());
         } catch (InterruptedException e) {
-            logger.error("can't add goods to storage", e);
+            logger.error("can't add goods to the storage", e);
         } finally {
             lock.unlock();
         }
@@ -51,9 +52,9 @@ public class Storage {
             goodsQuantity.set(currentQuantity - quantity);
             TimeUnit.SECONDS.sleep(SLEEP_TIME);
             notFull.signal();
-            logger.info("{} goods have TAKEN added, new quantity: {}", quantity, getCurrentQuantity());
+            logger.info("{} goods have been TAKEN, new quantity: {}", quantity, getCurrentQuantity());
         } catch (InterruptedException e) {
-            logger.error("can't take goods from storage", e);
+            logger.error("can't take goods from the storage", e);
         } finally {
             lock.unlock();
         }
@@ -68,11 +69,11 @@ public class Storage {
         if (goodsQuantity.get() == 0 || goodsQuantity.get() < CAPACITY * MIN_LOAD_FACTOR) {
             goodsQuantity.set((int) (goodsQuantity.get() + CAPACITY * MIN_LOAD_FACTOR));
             notEmpty.signal();
-            logger.info("goods quantity has been UPDATED by the manager, new quantity: {}", getCurrentQuantity());
+            logger.info("goods quantity has been UPDATED by the magic, new quantity: {}", getCurrentQuantity());
         } else if (goodsQuantity.get() > CAPACITY * MAX_LOAD_FACTOR) {
             goodsQuantity.set((int) (goodsQuantity.get() - CAPACITY * MIN_LOAD_FACTOR));
             notFull.signal();
-            logger.info("goods quantity has been UPDATED by the manager, new quantity: {}", getCurrentQuantity());
+            logger.info("goods quantity has been UPDATED by the magic, new quantity: {}", getCurrentQuantity());
         }
         lock.unlock();
     }
