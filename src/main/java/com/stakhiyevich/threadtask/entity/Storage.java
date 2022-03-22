@@ -69,11 +69,11 @@ public class Storage {
         if (goodsQuantity.get() == 0 || goodsQuantity.get() < CAPACITY * MIN_LOAD_FACTOR) {
             goodsQuantity.set((int) (goodsQuantity.get() + CAPACITY * MIN_LOAD_FACTOR));
             notEmpty.signal();
-            logger.info("goods quantity has been UPDATED by the magic, new quantity: {}", getCurrentQuantity());
+            logger.info("goods quantity has been UPDATED by magic, new quantity: {}", getCurrentQuantity());
         } else if (goodsQuantity.get() > CAPACITY * MAX_LOAD_FACTOR) {
             goodsQuantity.set((int) (goodsQuantity.get() - CAPACITY * MIN_LOAD_FACTOR));
             notFull.signal();
-            logger.info("goods quantity has been UPDATED by the magic, new quantity: {}", getCurrentQuantity());
+            logger.info("goods quantity has been UPDATED by magic, new quantity: {}", getCurrentQuantity());
         }
         lock.unlock();
     }

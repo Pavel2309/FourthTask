@@ -42,8 +42,6 @@ public class Main {
 
         truckQueue.addTrucksFromList(inputTrucks);
         ExecutorService executorService = Executors.newFixedThreadPool(POOL_SIZE);
-        Timer timer = new Timer(true);
-        timer.schedule(new StorageManager(), TIMER_DELAY, TIMER_INTERVAL);
 
         truckQueue.getTruckQueue().forEach(executorService::execute);
         executorService.shutdown();

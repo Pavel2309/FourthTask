@@ -33,12 +33,10 @@ public class TruckDataReaderImpl implements TruckDataReader {
             logger.error("can't read {}", filePath, e);
             throw new ReaderException("can't read " + filePath, e);
         }
-
         if (resultString.isEmpty()) {
             logger.error("the file is empty");
             throw new ReaderException("the file is empty");
         }
-
         return resultString;
     }
 }

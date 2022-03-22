@@ -16,7 +16,6 @@ public class TruckDataParserImpl implements TruckDataParser {
     public List<Truck> parseData(String value) {
         String[] trucksString = value.split(COMA_SPLITTER);
         List<Truck> trucks = new ArrayList<>();
-
         for (String singleTruckString : trucksString) {
             String[] truckString = singleTruckString.split(DOUBLE_COLON_SPLITTER);
             Truck truck = createTruckObject(

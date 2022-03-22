@@ -1,6 +1,6 @@
 package com.stakhiyevich.threadtask.entity;
 
-import com.stakhiyevich.threadtask.entity.comporator.TruckComparator;
+import com.stakhiyevich.threadtask.entity.comparator.TruckComparator;
 
 import java.util.List;
 import java.util.PriorityQueue;

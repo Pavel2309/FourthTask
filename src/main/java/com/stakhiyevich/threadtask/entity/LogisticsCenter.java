@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.Timer;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -17,19 +18,24 @@ public class LogisticsCenter {
     private static final int NUMBER_OF_TERMINALS = 5;
     private static final AtomicBoolean isLogisticsCenterCreated = new AtomicBoolean(false);
 
+    private static final int TIMER_DELAY = 0;
+    private static final int TIMER_INTERVAL = 5000;
+
     private static final Lock instanceLock = new ReentrantLock(true);
     private static final Lock terminalLock = new ReentrantLock(true);
     private static final Condition newAvailableTerminal = terminalLock.newCondition();
 
     private static LogisticsCenter instance = new LogisticsCenter();
 
+    Timer timer;
     private final Storage storage;
     private final Deque<Terminal> availableTerminals;
     private final Deque<Terminal> usedTerminals;
 
     private LogisticsCenter() {
-        //ask about whether the storage should also be a singleton
         storage = new Storage();
+        timer = new Timer(true);
+        timer.schedule(new StorageManager(), TIMER_DELAY, TIMER_INTERVAL);
         availableTerminals = new ArrayDeque<>(NUMBER_OF_TERMINALS);
         usedTerminals = new ArrayDeque<>(NUMBER_OF_TERMINALS);
         for (int i = 0; i < NUMBER_OF_TERMINALS; i++) {
@@ -56,13 +62,13 @@ public class LogisticsCenter {
         try {
             while (availableTerminals.isEmpty()) {
                 newAvailableTerminal.await();
-                logger.info("waiting for available terminal");
+                logger.info("waiting for an available terminal");
             }
             currentTerminal = availableTerminals.remove();
             usedTerminals.add(currentTerminal);
             logger.info("the terminal has been acquired, total used terminals: {}", usedTerminals.size());
         } catch (InterruptedException e) {
-            logger.error("can't acquire terminal", e);
+            logger.error("can't acquire a terminal", e);
         } finally {
             terminalLock.unlock();
         }
